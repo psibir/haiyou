@@ -34,7 +34,11 @@ Haiyou is a Python program that allows you to validate the structure and syllabl
 Here's an example interaction with the Haiyou program:
 
 ```
-Enter a haiku: An old silent pond
+Enter a haiku:
+An old silent pond
+A frog jumps into the pond—
+Splash! Silence again.
+
 Enter the language (en/fr): en
 Valid haiku!
 ```
