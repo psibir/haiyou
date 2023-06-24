@@ -5,20 +5,29 @@ Haiyou is a Python program that allows you to validate the structure and syllabl
 ## Requirements
 
 - Python 3.6 or above
-- Pyphen library (`pip install pyphen`)
+- Pyphen library
+
+## Installation
+
+1. Clone the repository or download the `haiyou.py` file.
+2. Install the required dependencies by running the following command:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   This will install the Pyphen library needed for syllable counting.
 
 ## Usage
 
-1. Clone the repository or download the `haiyou.py` file.
-2. Install the required dependencies by running `pip install pyphen`.
-3. Run the program using the following command:
+1. Run the program using the following command:
 
-```bash
-python haiyou.py
-```
+   ```bash
+   python haiyou.py
+   ```
 
-4. Enter a haiku when prompted. Make sure to follow the 5-7-5 syllable pattern and use exactly three lines.
-5. Select the language (English or French) by entering `en` or `fr` when prompted.
+2. Enter a haiku when prompted. Make sure to follow the 5-7-5 syllable pattern and use exactly three lines.
+3. Select the language (English or French) by entering `en` or `fr` when prompted.
 
 ## Example
 
@@ -34,7 +43,7 @@ Valid haiku!
 
 ### Adding more supported languages
 
-To add more supported languages for haiku validation, modify the `supported_languages` set in the `select_language()` function. Simply add the language code to the set. For example, to support Spanish and Japanese, the set would be updated as follows:
+To add more supported languages for haiku validation, modify the `supported_languages` set in the `select_language()` function located in `haiyou.py`. Simply add the language code to the set. For example, to support Spanish and Japanese, the set would be updated as follows:
 
 ```python
 supported_languages = {'en', 'fr', 'es', 'ja'}
