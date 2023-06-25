@@ -1,65 +1,83 @@
-import random
 import os
-from haiku_validator import HaikuValidator
-from collections import defaultdict
+import re
+import pyphen
+import random
+from haiku_validator import HaikuValidator, HaikuStructureError
 
 class HaikuGenerator:
-    def __init__(self, data_source="haiyou/corpus"):
-        if not os.path.isdir(data_source):
-            raise NotADirectoryError(f"Data source '{data_source}' is not a directory.")
-
+    def __init__(self, data_source):
         self.data_source = data_source
-        self.chain = self.build_markov_chain()
-        self.validator = HaikuValidator()
-        self.line_starters = self.find_line_starters()
 
-    def read_lines_from_file(self, file_path):
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-        return lines
+    def count_syllables(self, word):
+        """Count the number of syllables in a word using Pyphen."""
+        dic = pyphen.Pyphen(lang='en')
+        return len(dic.inserted(word).split('-'))
 
-    def build_markov_chain(self):
-        chain = defaultdict(list)
-        lines = []
-        for file_name in os.listdir(self.data_source):
-            file_path = os.path.join(self.data_source, file_name)
-            if os.path.isfile(file_path):
-                lines.extend(self.read_lines_from_file(file_path))
+    def read_corpus(self, directory):
+        """Read text files from the specified directory and extract words."""
+        words = []
+        for filename in os.listdir(directory):
+            if filename.endswith(".txt"):
+                filepath = os.path.join(directory, filename)
+                with open(filepath, "r", encoding="utf-8") as file:
+                    for line in file:
+                        line = line.strip().lower()
+                        words.extend(re.findall(r"[\w']+|[.,!?;]", line))
+        return words
 
-        for line in lines:
-            words = line.strip().split()
-            for i in range(len(words) - 1):
-                current_word = words[i]
-                next_word = words[i + 1]
-                chain[current_word].append(next_word)
+    def create_markov_chain(self, words):
+        """Create a Markov chain based on the input words."""
+        chain = {}
+        prefix = ("", "")
+
+        for word in words:
+            if word in [".", ",", "!", "?", ";"]:
+                prefix = ("", "")
+                continue
+
+            if prefix not in chain:
+                chain[prefix] = []
+
+            chain[prefix].append(word)
+            prefix = (prefix[1], word)
 
         return chain
 
-    def find_line_starters(self):
-        return [word for word in self.chain.keys() if word[0].isupper()]
+    def generate_markov_haiku(self, chain):
+        """Generate a haiku using the Markov chain."""
+        haiku = ""
+        line_syllables = [5, 7, 5]
 
-    def generate_line(self, seed_word, syllables):
-        line = [seed_word]
-        current_syllables = self.validator.count_syllables(seed_word)
+        for syllables in line_syllables:
+            line = self.generate_markov_line(chain, syllables)
+            haiku += line + "\n"
+
+        return haiku.strip()
+
+    def generate_markov_line(self, chain, syllables):
+        """Generate a line of the haiku using the Markov chain and the desired syllable count."""
+        line = ""
+        current_syllables = 0
+        prefix = random.choice(list(chain.keys()))
+
         while current_syllables < syllables:
-            if line[-1] in self.chain:
-                next_word = random.choice(self.chain[line[-1]])
-                line.append(next_word)
-                current_syllables += self.validator.count_syllables(next_word)
+            if prefix not in chain:
+                break
+
+            suffix = random.choice(chain[prefix])
+            word_syllables = self.count_syllables(suffix)
+
+            if current_syllables + word_syllables <= syllables:
+                line += suffix + " "
+                current_syllables += word_syllables
+                prefix = (prefix[1], suffix)
             else:
                 break
-        return " ".join(line) if current_syllables == syllables else None
+
+        return line.strip()
 
     def generate_haiku(self):
-        haiku = [self.generate_line(random.choice(self.line_starters), 5),
-                 self.generate_line(None, 7),
-                 self.generate_line(None, 5)]
-        return haiku
-
-# Example usage:
-data_source = "haiyou/corpus"  # Replace with the desired corpus directory path
-generator = HaikuGenerator(data_source=data_source)
-new_haiku = generator.generate_haiku()
-print("Generated Haiku:")
-for line in new_haiku:
-    print(line)
+        words = self.read_corpus(self.data_source)
+        chain = self.create_markov_chain(words)
+        generated_haiku = self.generate_markov_haiku(chain)
+        return generated_haiku.split("\n")

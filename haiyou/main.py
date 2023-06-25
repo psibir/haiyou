@@ -1,7 +1,3 @@
-from haiku_generator import HaikuGenerator
-from haiku_remixer import HaikuRemixer
-from haiku_validator import HaikuValidator, HaikuStructureError
-
 def main():
     haikus = [
         "An old silent pond\nA frog jumps into the pond—\nSplash! Silence again.",
@@ -31,7 +27,7 @@ def main():
                 print(e)
 
         elif choice == "2":
-            data_source = "haiyou/corpus"  # Replace with the desired data source path
+            data_source = input("Enter the corpus directory path: ")
             generator = HaikuGenerator(data_source)
             new_haiku = generator.generate_haiku()
             print("Generated Haiku:")
