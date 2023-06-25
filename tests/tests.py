@@ -1,7 +1,7 @@
 import unittest
 from io import StringIO
 from unittest.mock import patch
-from ..haiyou import HaikuValidator, HaikuStructureError
+from ..haiyou.haiku_validator import HaikuValidator, HaikuStructureError
 
 class HaikuValidatorTestCase(unittest.TestCase):
     def test_valid_haiku(self):
