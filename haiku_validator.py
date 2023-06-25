@@ -53,19 +53,3 @@ def select_language():
         language = 'en'
 
     return language
-
-def main():
-    haiku = input("Enter a haiku: ")
-    try:
-        sanitized_haiku = sanitize_input(haiku)
-        language = select_language()
-
-        validator = HaikuValidator(sanitized_haiku, language=language)
-        validator.validate_haiku()
-        print("Valid haiku!")
-    except HaikuStructureError as e:
-        print("Invalid haiku:")
-        print(e)
-
-if __name__ == "__main__":
-    main()
