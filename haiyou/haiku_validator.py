@@ -19,7 +19,7 @@ class HaikuValidator:
 
     def validate_haiku(self):
         """Validate the haiku's structure and syllable count."""
-        lines = self.haiku.split("\n")
+        lines = self.custom_split(self.haiku)
 
         if len(lines) != 3:
             raise HaikuStructureError("Haiku must have exactly 3 lines.")
@@ -38,6 +38,11 @@ class HaikuValidator:
             raise HaikuStructureError("\n".join(structure_errors))
 
         return True
+
+    def custom_split(self, haiku):
+        """Split the haiku based on the specified newline indication."""
+        lines = haiku.split("/")  # Customize this line for your desired newline indication
+        return [line.strip() for line in lines]
 
 def sanitize_input(input_str):
     """Sanitize the input haiku by removing leading/trailing whitespace and converting to lowercase."""
