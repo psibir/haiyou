@@ -13,9 +13,10 @@ class HaikuValidator:
         self.syllable_counter = pyphen.Pyphen(lang=language)
 
     def count_syllables(self, word):
-        """Count the number of syllables in a word."""
-        syllables = self.syllable_counter.inserted(word).split("-")
-        return len(syllables)
+        """Count the number of syllables in a word using both regex and Pyphen library."""
+        syllables_regex = len(re.findall(r'[aeiouy]+', word, re.IGNORECASE))
+        syllables_pyphen = len(self.syllable_counter.inserted(word).split('-'))
+        return max(syllables_regex, syllables_pyphen)
 
     def validate_haiku(self):
         """Validate the haiku's structure and syllable count."""

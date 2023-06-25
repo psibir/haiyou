@@ -31,7 +31,8 @@ def main():
                 print(e)
 
         elif choice == "2":
-            generator = HaikuGenerator(haikus)
+            data_source = "haiyou/corpus"  # Replace with the desired data source path
+            generator = HaikuGenerator(data_source)
             new_haiku = generator.generate_haiku()
             print("Generated Haiku:")
             for line in new_haiku:
